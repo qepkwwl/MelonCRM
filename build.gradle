@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'war'  
+}
+
+repositories {
+	maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    jcenter()
+}
+configurations {
+    provided
+}
+sourceSets {
+    main { compileClasspath += configurations.provided }
+}
+dependencies {
+	compile 'javax.servlet:jstl:1.2'
+	compile 'javax.servlet:jsp-api:2.0'
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0' 
+    
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.7.19'          
+    
+	compile 'org.springframework:spring-beans'
+	compile 'org.springframework:spring-webmvc'
+	compile 'org.springframework:spring-web'
+	compile 'org.springframework:spring-core'
+	compile 'org.springframework.security:spring-security-web:4.2.3.RELEASE'
+	compile	'org.springframework.security:spring-security-config:4.2.3.RELEASE'
+}
+
+configurations.all {
+	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+		if (details.requested.group == 'org.springframework') {
+			details.useVersion '4.3.9.RELEASE'
+		}
+	}
+}
+
+task copyJars(type: Copy) {
+    from configurations.runtime into 'WebContent/WEB-INF/lib' 
+}
